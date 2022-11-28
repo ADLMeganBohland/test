@@ -31,52 +31,29 @@ $data = array(
 $options = array(
     'http' => array(
         'method'  => 'POST',
-        'Authorization: Basic '. base64_encode("$userName:$password"),
-        'header'  => "Content-type: application/x-www-form-urlencoded", 
+        'header' => array('Authorization: Basic '. base64_encode("BasicKey:BasicSecret"),  
             "Content-Type: application/json\r\n" .
-                "Accept: application/json\r\n",
+            "Accept: application/json\r\n"),
         'content' => json_encode($data)
     )
 );
 $context  = stream_context_create($options);
-$result = file_get_contents($url, false, $context);
+
+echo"what is context here, before going to file?? + $context";
+
+$fp = fopen("http://127.0.0.1:63398/api/v1/tenant", 'r', false, $context);
+fpassthru($fp);
+fclose($fp);
+
+$result = file_get_contents($fp);
+
+if ($result === FALSE) 
+{ echo"Something went wrong !<br><br>";
+}
+
 $response = json_decode( $result);
-//if ($result === FALSE) { /* Handle error */ 
-//*/
 echo "The result is  ";
 var_dump($response);
 //return $result;
 
  }
-
-
-    /*
-    $url = $urlToSend;
-    $versioned_statements = "code=bob";
-    $statements = "";
-        $requestCfg = array(
-            'headers' => array(
-                'Content-Type' => 'application/json'
-            ),
-            'content' => json_encode($versioned_statements, JSON_UNESCAPED_SLASHES),
-        );
-        //if (! empty($attachments_map)) {
-        //    $$lets->_buildAttachmentContent($requestCfg, array_values($attachments_map));
-      //  }
-       //I instantiated it correctly!!!~!~
-       $response = sendRequest('POST', $url, $requestCfg);
-
-       /*
-        if ($response) {
-            $parsed_content = json_decode($response->content, true);
-            foreach ($parsed_content as $i => $stId) {
-                $statements[$i]->setId($stId);
-            }
-
-            $response = $statements;
-        }*/
-        //echo "$response";
-       // echo"worked?";
-//*/
-       // return $response;
-//////////////trial curlless method
