@@ -8,21 +8,48 @@
 
     <h1>Tenant retrieval form</h1>
 <?php
-$tenantName = htmlspecialchars($_POST["textboxForName"] ?? "", ENT_QUOTES);
-//$userName = htmlspecialchars($_POST["textboxForUser"] ?? "", ENT_QUOTES);
-//$password = htmlspecialchars($_POST["textboxForPassword"] ?? "", ENT_QUOTES);
-$url = htmlspecialchars($_POST["textboxForURL"] ?? "", ENT_QUOTES);
-
-echo"<div class=\"feedback\">TenantName: $tenantName<br>Username: $userName<br>Password: $password</div>";
 
         ?>
 
         <form method="post" action="tenant.php">
             <div class="feedback">
-            <label for="name">Tenant Name</label>
-            <input type="text" name="textboxForName">
+            <label for="name">New Tenant Name</label>
+            <input type="text" name="textboxForNewName">
             </div>
         
+            <div class="feedback">
+            <label for="name">Username</label>
+            <input type="text" name="textboxForUsername1">
+            </div>
+
+            <div class="feedback">
+            <label for="name">Password</label>
+            <input type="text" name="textboxForPassword1">
+            </div>
+
+            <div class="feedback">
+            <label for="name">URL</label>
+            <input type="text" name="textboxForURL1">
+            </div>
+
+            <input type="submit" name="Register" value="Confirm" class="btn btn-primary">
+        </form>
+
+        <br>
+        <h1>Token retrieval form</h1>
+        <br>
+        
+        <form method="post" action="tenant.php">
+            <div class="feedback">
+            <label for="name">Audience</label>
+            <input type="text" name="textboxAudience">
+            </div>
+        
+            <div class="feedback">
+            <label for="name">Tenant Id</label>
+            <input type="text" name="textboxForId">
+            </div>
+
             <div class="feedback">
             <label for="name">Username</label>
             <input type="text" name="textboxForUser">
@@ -38,7 +65,7 @@ echo"<div class=\"feedback\">TenantName: $tenantName<br>Username: $userName<br>P
             <input type="text" name="textboxForURL">
             </div>
 
-            <input type="submit" name="submit" value="Register" class="btn btn-primary">
+            <input type="submit" name="GetToken" value="Confirm" class="btn btn-primary">
         </form>
 
     </body>
