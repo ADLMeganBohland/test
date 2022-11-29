@@ -8,15 +8,12 @@
 
     <h1>Tenant retrieval form</h1>
 <?php
-//require_once('RemoteLRS.php');
-var_dump($_POST);
 $tenantName = htmlspecialchars($_POST["textboxForName"] ?? "", ENT_QUOTES);
 //$userName = htmlspecialchars($_POST["textboxForUser"] ?? "", ENT_QUOTES);
 //$password = htmlspecialchars($_POST["textboxForPassword"] ?? "", ENT_QUOTES);
 $url = htmlspecialchars($_POST["textboxForURL"] ?? "", ENT_QUOTES);
 
 echo"<div class=\"feedback\">TenantName: $tenantName<br>Username: $userName<br>Password: $password</div>";
-//$response = RemoteLRS::createTenant($url);
 
         ?>
 
