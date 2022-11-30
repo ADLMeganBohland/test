@@ -16,14 +16,25 @@ if (isset($_POST['Register'])) {
     echo"<div class=\"feedback\">newTenantName: $newTenantName<br>Username: $firstUserName<br>Password: $firstPassword</div><br>URL: $firstUrl</div>";
 
     //will create a new tenant
-    createTenant($firstUrl, $firstUserName, $firstPassword, $newTenantName);
+    $tenantInfo = cmi5Connectors::createTenant($firstUrl, $firstUserName, $firstPassword, $newTenantName);
+    echo"<br>";
+    echo"<br>";
+
+    var_dump($tenantInfo);
+    $tenantName = $tenantInfo['code'];
+    $tenantId = $tenantInfo['id'];
+        echo"<br>";
+        echo"returned name is $tenantName";
+        echo"<br>";
+        echo"returned id is $tenantId";
+
 }elseif (isset($_POST['GetToken'])) {
     
     echo"Get Token button pushed";
     echo"<div class=\"feedback\">Username: $userName<br>Audience: $audience</div><br>Tenent ID: $tenantId</div><br>Password: $password</div><br>URL: $url</div>";
 
     //will retreive tenants bearer token
-    retrieveToken($url, $userName, $password, $audience, $tenantId);
+    cmi5Connectors::retrieveToken($url, $userName, $password, $audience, $tenantId);
 }
 
 echo "<br>";
@@ -32,6 +43,17 @@ echo "<br>";
 //createTenant($url, $userName, $password, $newTenantName);
 echo "<br>";
 echo "<br>";
+
+///Class to hold methods for working with cmi5
+// @method - createTenant: used to create a new tenant
+// @method - retrieveToken: used to retreive a bearer token with tenant id
+// @property - 
+class cmi5Connectors{
+
+public static $tenantName = "";
+public static $retTenantId = "";
+public static $bearerToken = "";
+
 
 
 //////
@@ -53,61 +75,25 @@ function createTenant($urlToSend, $user, $pass, $newTenantName){
     $data = array(
         'code' => $tenant);
 
-    // use key 'http' even if you send the request to https://...
-    //There can be multiple headers but as an array under the ONE header
-    //content(body) must be JSON encoded here, as that is what player accepts
-    $options = array(
-        'http' => array(
-            'method'  => 'POST',
-            'header' => array('Authorization: Basic '. base64_encode("$username:$password"),  
-                "Content-Type: application/json\r\n" .
-                "Accept: application/json\r\n"),
-            'content' => json_encode($data)
-        )
-    );
-    //the options are here placed into a stream to be sent
-    $context  = stream_context_create($options);
-    
+    //sends the stream to the specified URL 
+    $result = cmi5Connectors::sendRequest($data, $url, $username, $password);
 
-        //sends the stream to the specified URL and stores results (the false is use_include_path, which we dont want in this case, we want to go to the url)
-        $result = file( $url, false, $context );
-
-        if ($result === FALSE) 
-            { echo"Something went wrong!";
-              echo"<br>";
-              var_dump($_SESSION);
-        }
-        else{
-            echo "Tenant created. Response:  ";
-            //implode function joins elements of array, it takes the wanted separater as first arg and array as second
-            echo implode(" ", $result);
+    if ($result === FALSE) 
+        { echo"Something went wrong!";
             echo"<br>";
-            echo"<br>";
-        }
-        //Now lets try and SAVE the info returned as variables so we don't need user input through boxes
-        //explode separates the values in a string, we need this now because file() returned the code and id as a single array element//
-        //aka a single string
-        $returnedInfo = $result[0];
-        $info = explode('","', $returnedInfo);
-        //$info2 = explode(':', $info);
-        $returnedName = explode('":"', $info[0]);
-        $returnedId = explode('":', '}', $info[1]);
-        ///well it works but not wuite right, what if we split on , then on : seems excessive,buuuut
-        //Dang last }!! However str_split() looks really promising and if not preg_split() also looks good, but it's about quitting time!!
-        echo"did it work?";
-        echo"<br>";
-        echo"returned name is $returnedName[1]";
-        echo"<br>";
-        echo"returned id is  $returnedId[1]";
-
-        //what does this do?
-        echo"<br>";
-        // Loop through our array, show HTML source as HTML source; and line numbers too.
-        foreach ($result as $line_num => $line) {
-        echo "Line #<b>{$line_num}</b> : " . htmlspecialchars($line) . "<br />\n";
+            var_dump($_SESSION);
+    }
+    else{
+        echo "Tenant created. Response: is $result";
+        var_dump(json_decode($result, true));
+    }
+        //decode returned response into array
+        $returnedInfo = json_decode($result, true);
+        
+        //Return an array with tenant name and info
+        return $returnedInfo;
 }
 
- }
 
  //Ok, next we need a function to retrieve bearer token, all in PHP
  //@param $urlToSend - URL retrieved from user in URL textbox
@@ -165,16 +151,52 @@ function createTenant($urlToSend, $user, $pass, $newTenantName){
              echo"The token is  + $token";
          }
 
- }
+    }
+
  
+    ///Function to construct, send an URL, and save result
+    //@param $dataBody - the data that will be used to construct the body of request as JSON 
+    //@param $url - The URL the request will be sent to
+    //@param $username - the username for basic auth
+    //@param $password - the password for basic auth
+    ///TODO - perhaps make an overload constructor that can take header info as an array, and method so it can work for GET/POST
+    /////
+    public function sendRequest($dataBody, $urlDest, $username, $password) {
+        $data = $dataBody;
+        $url = $urlDest;
+        $user = $username;
+        $pass = $password;
+
+        echo"sendRequest has been fired";
+
+    // use key 'http' even if you send the request to https://...
+    //There can be multiple headers but as an array under the ONE header
+    //content(body) must be JSON encoded here, as that is what CMI5 player accepts
+    $options = array(
+        'http' => array(
+            'method'  => 'POST',
+            'header' => array('Authorization: Basic '. base64_encode("$user:$pass"),  
+                "Content-Type: application/json\r\n" .
+                "Accept: application/json\r\n"),
+            'content' => json_encode($data)
+        )
+    );
+    //the options are here placed into a stream to be sent
+    $context  = stream_context_create($options);
+    
+
+    //sends the stream to the specified URL and stores results (the false is use_include_path, which we dont want in this case, we want to go to the url)
+    $result = file_get_contents( $url, false, $context );
+
+    //return response
+    return $result;
+    }
  
- 
- 
- 
+} 
  
  
  //found this on php website to check status code only 
-    function get_http_response_code($theURL) {
-        $headers = get_headers($theURL);
-        return substr($headers[0], 9, 3);
-    }
+ //   function get_http_response_code($theURL) {
+   //     $headers = get_headers($theURL);
+     //   return substr($headers[0], 9, 3);
+    //
