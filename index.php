@@ -68,6 +68,29 @@
             <input type="submit" name="GetToken" value="Confirm" class="btn btn-primary">
         </form>
 
+        <br>
+        <h1>Retrieve URL</h1>
+        <br>
+        
+        <form method="post" action="tenant.php">
+            <div class="feedback">
+            <label for="name">Homepage</label>
+            <input type="text" name="textboxHomepage">
+            </div>
+        
+            <div class="feedback">
+            <label for="name">Tenant name for URL</label>
+            <input type="text" name="textboxNameforUrl">
+            </div>
+
+            <div class="feedback">
+            <label for="name">Return URL</label>
+            <input type="text" name="textboxForReturnUrl">
+            </div>
+
+            <input type="submit" name="GetURL" value="Confirm" class="btn btn-primary">
+        </form>
+
     </body>
 
 

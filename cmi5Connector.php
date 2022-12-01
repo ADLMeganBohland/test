@@ -90,7 +90,55 @@ class cmi5Connectors{
         }
 
 }
+
+    ///Function to retrieve a luanch URL for course
+    //@param $actorName - the tenant name to be passed as name property actor->account 
+    //@param $homepage - The URL that will be passed as the homepage property in actor->account
+    //@param $returnUrl - The URL that will be passed as the returnUrl property in actor
+    //@param $url - The URL to send request for launch URL to
+    ////////
+    public function retrieveUrl($actorName, $homepage, $returnUrl, $url, $token){
+
+        //retrieve and assign params
+        $actorName = $this->$actorName;
+        $homeUrl = $homepage;
+        $returnUrl = $this->$returnUrl;
+        $token = $this->$token;
     
+        //the body of the request must be made as array first
+        $data = array(
+            'actor' => array (
+                'account' => array(
+                    "homePage:" => $homeUrl,
+                    "name:" => $actorName,
+            )),
+            'returnUrl' => $returnUrl
+        );
+    
+        // use key 'http' even if you send the request to https://...
+        //There can be multiple headers but as an array under the ONE header
+        //content(body) must be JSON encoded here, as that is what CMI5 player accepts
+        $options = array(
+            'http' => array(
+                'method'  => 'POST',
+                'header' => array('Authorization: Bearer '. base64_encode(""),  
+                    "Content-Type: application/json\r\n" .
+                    "Accept: application/json\r\n"),
+                'content' => json_encode($data)
+            )
+        );
+        //the options are here placed into a stream to be sent
+        $context  = stream_context_create($options);
+        
+    
+        //sends the stream to the specified URL and stores results (the false is use_include_path, which we dont want in this case, we want to go to the url)
+        $result = file_get_contents( $url, false, $context );
+    
+        //return response
+        
+        return $result;
+    }
+        
      
         ///Function to construct, send an URL, and save result
         //@param $dataBody - the data that will be used to construct the body of request as JSON 

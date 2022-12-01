@@ -14,6 +14,11 @@ $tenantId = htmlspecialchars($_POST["textboxForId"] ?? "", ENT_QUOTES);
 $password = htmlspecialchars($_POST["textboxForPassword"] ?? "", ENT_QUOTES);
 $url = htmlspecialchars($_POST["textboxForURL"] ?? "", ENT_QUOTES);
 
+$homepage = htmlspecialchars($_POST["textboxHomepage"] ?? "", ENT_QUOTES);
+$actorName = htmlspecialchars($_POST["textboxNameforUrl"] ?? "", ENT_QUOTES);
+$returnUrl = htmlspecialchars($_POST["textboxForReturnUrl"] ?? "", ENT_QUOTES);
+
+
 //To hold variables overall, aka after manipulation from functions
 $returnedTenName = "";
 $returnedTenId = "";
@@ -44,6 +49,17 @@ if (isset($_POST['Register'])) {
 
     //will retreive tenants bearer token
   $returnedToken = cmi5Connectors::retrieveToken($url, $userName, $password, $audience, $tenantId);
+
+}elseif (isset($_POST['GetURL'])) {
+ 
+  echo"Get Token button pushed";
+  echo"<div class=\"feedback\">Actor name: $actorName<br>Homepage URL: $homepage</div><br>Return URL: $returnUrl</div>";
+
+  $url = 
+  $result = cmi5Connectors::retrieveUrl($actorName, $homepage, $returnUrl, $url, $token);
+
+  echo"<br>";
+  echo"It is working here is result ++ $result";
 
 }
 
