@@ -29,8 +29,11 @@ if (isset($_POST['Register'])) {
     echo"Register button pushed";
     echo"<div class=\"feedback\">newTenantName: $newTenantName<br>Username: $firstUserName<br>Password: $firstPassword</div><br>URL: $firstUrl</div>";
 
-    //will create a new tenant
-    $tenantInfo = cmi5Connectors::createTenant($firstUrl, $firstUserName, $firstPassword, $newTenantName);
+  $foo = new cmi5Connectors;
+  $createTenant = $foo->getCreateTenant();
+   
+  //will create a new tenant
+    $tenantInfo = $createTenant($firstUrl, $firstUserName, $firstPassword, $newTenantName);
     echo"<br>";
     echo"<br>";
   echo"wtf";

@@ -11,6 +11,9 @@ class cmi5Connectors{
     public static $tenantId = "";
     public static $bearerToken = "";
     
+    public function getCreateTenant(){
+        return [$this, 'createTenant'];
+    }
     
     
     //////
@@ -34,7 +37,7 @@ class cmi5Connectors{
             'code' => $tenant);
     
         //sends the stream to the specified URL 
-        $result = cmi5Connectors::sendRequest($data, $url, $username, $password);
+        $result = $this->sendRequest($data, $url, $username, $password);
 
         echo "<br>";
         echo "What about here?";
