@@ -34,8 +34,11 @@ class cmi5Connectors{
             'code' => $tenant);
     
         //sends the stream to the specified URL 
-        $result = $this->sendRequest($data, $url, $username, $password);
-    
+        $result = cmi5Connectors::sendRequest($data, $url, $username, $password);
+
+        echo "<br>";
+        echo "What about here?";
+
         if ($result === FALSE) 
             { echo"Something went wrong!";
                 echo"<br>";
