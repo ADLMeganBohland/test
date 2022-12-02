@@ -22,6 +22,7 @@ class cmi5Connectors{
     /////MB
     public function createTenant($urlToSend, $user, $pass, $newTenantName){ 
     
+        echo"Are we making it here?";
         //retrieve and assign params
         $url = $urlToSend;
         $username = $user;
@@ -33,7 +34,7 @@ class cmi5Connectors{
             'code' => $tenant);
     
         //sends the stream to the specified URL 
-        $result = cmi5Connectors::sendRequest($data, $url, $username, $password);
+        $result = $this->sendRequest($data, $url, $username, $password);
     
         if ($result === FALSE) 
             { echo"Something went wrong!";

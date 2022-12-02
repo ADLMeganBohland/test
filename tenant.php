@@ -33,8 +33,9 @@ if (isset($_POST['Register'])) {
     $tenantInfo = cmi5Connectors::createTenant($firstUrl, $firstUserName, $firstPassword, $newTenantName);
     echo"<br>";
     echo"<br>";
+  echo"wtf";
+    //var_dump($tenantInfo);
 
-    var_dump($tenantInfo);
     $returnedTenName = $tenantInfo['code'];
     $returnedTenId = $tenantInfo['id'];
         echo"<br>";
