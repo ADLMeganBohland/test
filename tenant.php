@@ -18,6 +18,9 @@ $homepage = htmlspecialchars($_POST["textboxHomepage"] ?? "", ENT_QUOTES);
 $actorName = htmlspecialchars($_POST["textboxNameforUrl"] ?? "", ENT_QUOTES);
 $returnUrl = htmlspecialchars($_POST["textboxForReturnUrl"] ?? "", ENT_QUOTES);
 
+//to bring in functions
+$connectors = new cmi5Connectors;
+
 
 //To hold variables overall, aka after manipulation from functions
 $returnedTenName = "";
@@ -29,8 +32,7 @@ if (isset($_POST['Register'])) {
     echo"Register button pushed";
     echo"<div class=\"feedback\">newTenantName: $newTenantName<br>Username: $firstUserName<br>Password: $firstPassword</div><br>URL: $firstUrl</div>";
 
-  $foo = new cmi5Connectors;
-  $createTenant = $foo->getCreateTenant();
+  $createTenant = $connectors->getCreateTenant();
    
   //will create a new tenant
     $tenantInfo = $createTenant($firstUrl, $firstUserName, $firstPassword, $newTenantName);
@@ -51,20 +53,55 @@ if (isset($_POST['Register'])) {
     echo"Get Token button pushed";
     echo"<div class=\"feedback\">Username: $userName<br>Audience: $audience</div><br>Tenent ID: $tenantId</div><br>Password: $password</div><br>URL: $url</div>";
 
+    $retrieveToken = $connectors->getRetrieveToken();
+
     //will retreive tenants bearer token
-  $returnedToken = cmi5Connectors::retrieveToken($url, $userName, $password, $audience, $tenantId);
+  $returnedToken = $retrieveToken($url, $userName, $password, $audience, $tenantId);
 
 }elseif (isset($_POST['GetURL'])) {
  
   echo"Get Token button pushed";
   echo"<div class=\"feedback\">Actor name: $actorName<br>Homepage URL: $homepage</div><br>Return URL: $returnUrl</div>";
+  //$actorName = "your";
+  $courseId = "9";
+  $auIndex = "0";
+  
+  //URL to send request to
+  $url = "http://localhost:63398/api/v1/course/{$courseId}/launch-url/{$auIndex}";
+  echo"<br>";
+  echo "is the url being built correctly???   {$url}";
 
-  $url = 
-  $result = cmi5Connectors::retrieveUrl($actorName, $homepage, $returnUrl, $url, $token);
+  echo "<br>";
+  echo "Can it see returned TOken here?   + $returnedToken";
+  echo "<br>";
+//No it CANN>OT because we keep resubmitting form so lea=ts hardcode for know to practice
+  
+  $token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ1cm46Y2F0YXB1bHQ6cGxheWVyIiwiYXVkIjoidXJuOmNhdGFwdWx0Ok1vb2RsZSIsInN1YiI6MywianRpIjoiM2FlZDliNDEtYjk4Yy00NmJiLTkzYmUtMmM5ZTRiMzhlZWUxIiwiaWF0IjoxNjcwMjYwNzE2fQ.8w0QiKNE4RMOyLMcktfX_fruhS1i-kfqlfaWO2WYJP4";
+  
+  
+  $retrieveUrl = $connectors->getRetrieveUrl();
+  $result = $retrieveUrl($actorName, $homepage, $returnUrl, $url, $token);
+  
+
+
 
   echo"<br>";
-  echo"It is working here is result ++ $result";
+  echo "It is working here is result ++ {$result}";
 
+  if ($result === FALSE) 
+  { echo"Something went wrong!";
+      echo"<br>";
+      var_dump($_SERVER);
+  }
+  else{
+  echo "Tenant created. Response: is $result";
+  //var_dump(json_decode($result, true));
+  }
+  //decode returned response into array
+  //$returnedInfo = json_decode($result, true);
+  
+  //Return an array with tenant name and info
+  //return $returnedInfo;
 }
 
 echo "<br>";

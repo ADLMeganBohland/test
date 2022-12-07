@@ -1,5 +1,5 @@
 {
-  "name": "Moodle",
+  "name": "moodle",
   "private": true,
   "description": "Moodle",
   "devDependencies": {
@@ -53,6 +53,22 @@
     "node": ">=16.14.0 <17"
   },
   "dependencies": {
-    "@babel/eslint-parser": "^7.17.0"
-  }
+    "@babel/eslint-parser": "^7.17.0",
+    "hapi": "^18.1.0"
+  },
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ADLMeganBohland/test.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ADLMeganBohland/test/issues"
+  },
+  "homepage": "https://github.com/ADLMeganBohland/test#readme"
 }

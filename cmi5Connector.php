@@ -14,8 +14,12 @@ class cmi5Connectors{
     public function getCreateTenant(){
         return [$this, 'createTenant'];
     }
-    
-    
+    public function getRetrieveToken(){
+        return [$this, 'retrieveToken'];
+    }
+    public function getRetrieveUrl(){
+        return [$this, 'retrieveUrl'];
+    }
     //////
     //Function to create a tenant
     // @param $urlToSend - URL retrieved from user in URL textbox
@@ -104,46 +108,121 @@ class cmi5Connectors{
     //@param $returnUrl - The URL that will be passed as the returnUrl property in actor
     //@param $url - The URL to send request for launch URL to
     ////////
-    public function retrieveUrl($actorName, $homepage, $returnUrl, $url, $token){
+    public function retrieveUrl($actorName, $homepage, $returnUrl, $url, $bearerToken){
+
+        echo "Retreive url function entered ";
 
         //retrieve and assign params
-        $actorName = $this->$actorName;
+        $actor = $actorName;
         $homeUrl = $homepage;
-        $returnUrl = $this->$returnUrl;
-        $token = $this->$token;
-    
+        $retUrl = $returnUrl;
+        $token = $bearerToken;
+        $reqUrl = $url;
+        echo "<br>";
+        echo "actorname is {$actor} and the home URL is {$homeUrl}, now returnURL is {$retUrl}, the token is {$token}, and its going to {$reqUrl}";
+        echo "<br>";
+
+        /**
+         *  //the body of the request must be made as array first
+        *$data = array(
+        *   'tenantId' => $id,
+        *  'audience' => $tokenUser
+        *);
+         */
         //the body of the request must be made as array first
-        $data = array(
+        $data1 = array(
             'actor' => array (
                 'account' => array(
                     "homePage:" => $homeUrl,
-                    "name:" => $actorName,
-            )),
-            'returnUrl' => $returnUrl
+                    "name:" => $actor,
+                )
+            ),
+            'returnUrl' => $retUrl
         );
+
+        $data2 = json_encode($data1, JSON_UNESCAPED_SLASHES);
+
+        echo "<br>";
+        echo "Ok, how are we doing, is the body correct?  ";  
+        echo"$data2";
+        echo "<br>";
     
         // use key 'http' even if you send the request to https://...
         //There can be multiple headers but as an array under the ONE header
         //content(body) must be JSON encoded here, as that is what CMI5 player accepts
+        //JSON_UNESCAPED_SLASHES used so http addresses are displayed correctly
         $options = array(
             'http' => array(
                 'method'  => 'POST',
-                'header' => array('Authorization: Bearer '. base64_encode(""),  
+                'ignore_errors' => true,
+                'header' => array("Authorization: Bearer ". $token,  
                     "Content-Type: application/json\r\n" .
                     "Accept: application/json\r\n"),
-                'content' => json_encode($data)
+                'content' => json_encode($data1, JSON_UNESCAPED_SLASHES)
+
             )
-        );
+        )
+            ;
+
+        
+        echo "<br>";
+        echo" huh what about error " . json_last_error();
+
+        echo "<br>";
+        echo"Welll what is content??";
+        var_dump($options);
+        echo "<br>";
+
+
+
         //the options are here placed into a stream to be sent
-        $context  = stream_context_create($options);
-        
-    
+       $context  = stream_context_create(($options));
+        echo "<br>";
+       echo "And the context is " . $context;
+        echo "<br>";
+
+        /*
+        //lets see if this brings back a cERTAIN error
+        $context = stream_context_create(array(
+            'http' => array('ignore_errors' => true,
+            $options
+        )));
+        */
+        //$result = file_get_contents('http://your/url', false, $context);
+        echo "<br>";
+        echo"Welll, and where is it going??? {$reqUrl}";
+        echo "<br>";
+
+        //$reqUrl = urlencode($reqUrl);
         //sends the stream to the specified URL and stores results (the false is use_include_path, which we dont want in this case, we want to go to the url)
-        $result = file_get_contents( $url, false, $context );
-    
+        $result = file_get_contents( $reqUrl, false, $context );
+    /*
+        $fp = fopen($reqUrl, 'r', false, $context);
+        fpassthru($fp);
+        fclose($fp);
+*/
+        echo "<br> url RETRIEVED. URL is $result";
+        echo "<br>";
+        var_dump(json_decode($result, true));
         //return response
+
+        echo"<br>";
+        echo"About to dump http_res_headers: ";
+        echo"<br>";
+
+        //maybe this will shed light?
+        if ($result === FALSE) {
+            var_dump($http_response_header);
+        }
+            echo"<br>";
+
+            echo"<br>";
+        echo "where any headers sent?";
+        echo "<br>";
+        var_dump(headers_sent());
+
         
-        return $result;
+       // return $result;
     }
         
      
